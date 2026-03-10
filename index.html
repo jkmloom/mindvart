@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mindvart — Free Learning, Everywhere</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #F7F4EF; --surface: #FFFFFF; --ink: #1C1917; --ink-soft: #6B6860; --ink-muted: #A8A49E;
+      --accent: #2C5F8A; --accent-light: #E8F0F8; --accent-hover: #1E4A6E;
+      --green: #2D6A4F; --green-light: #E6F4EE;
+      --amber: #92400E; --amber-light: #FEF3C7;
+      --rose: #9F1239; --rose-light: #FFF1F2;
+      --purple: #5B21B6; --purple-light: #EDE9FE;
+      --teal: #0F766E; --teal-light: #CCFBF1;
+      --orange: #C2410C; --orange-light: #FFF7ED;
+      --border: #E8E3DB;
+      --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04);
+      --shadow-hover: 0 4px 12px rgba(0,0,0,0.10), 0 12px 32px rgba(0,0,0,0.06);
+      --radius: 14px;
+    }
+    body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--ink); min-height: 100vh; }
+
+    /* LANDING */
+    #landing {
+      min-height: 100vh; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; padding: 2rem; gap: 2.5rem;
+      transition: all 0.45s cubic-bezier(0.4,0,0.2,1);
+    }
+    #landing.search-active {
+      min-height: auto; padding: 1.1rem 2rem 0; flex-direction: row;
+      justify-content: flex-start; gap: 1.5rem;
+      border-bottom: 1px solid var(--border); background: var(--surface);
+    }
+    .logo-block { text-align: center; transition: all 0.45s cubic-bezier(0.4,0,0.2,1); }
+    #landing.search-active .logo-block { text-align: left; flex-shrink: 0; }
+    .logo-mark { display: inline-flex; align-items: center; gap: 0.55rem; text-decoration: none; color: inherit; cursor: pointer; }
+    .logo-icon { width: 40px; height: 40px; background: var(--accent); border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.45s ease; }
+    #landing.search-active .logo-icon { width: 32px; height: 32px; border-radius: 8px; }
+    .logo-icon svg { width: 22px; height: 22px; fill: white; transition: all 0.45s; }
+    #landing.search-active .logo-icon svg { width: 17px; height: 17px; }
+    .logo-name { font-family: 'Lora', serif; font-size: 1.95rem; font-weight: 600; letter-spacing: -0.02em; line-height: 1; transition: font-size 0.45s ease; }
+    #landing.search-active .logo-name { font-size: 1.3rem; }
+    .logo-tagline { font-size: 0.78rem; color: var(--ink-muted); font-weight: 400; margin-top: 0.2rem; letter-spacing: 0.03em; }
+    #landing.search-active .logo-tagline { display: none; }
+    .hero-text { text-align: center; }
+    #landing.search-active .hero-text { display: none; }
+    .hero-text h1 { font-family: 'Lora', serif; font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 500; line-height: 1.2; letter-spacing: -0.02em; margin-bottom: 0.75rem; }
+    .hero-text h1 em { font-style: italic; color: var(--accent); }
+    .hero-text p { font-size: 1rem; color: var(--ink-soft); max-width: 420px; line-height: 1.6; }
+    .hero-sources { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.4rem; margin-top: 0.75rem; max-width: 480px; }
+    .src-pill { font-size: 0.72rem; color: var(--ink-muted); background: var(--surface); border: 1px solid var(--border); border-radius: 50px; padding: 0.2rem 0.65rem; }
+
+    /* SEARCH BOX */
+    .search-wrapper { width: 100%; max-width: 620px; transition: all 0.45s cubic-bezier(0.4,0,0.2,1); }
+    #landing.search-active .search-wrapper { max-width: 540px; flex: 1; }
+    .search-box { display: flex; align-items: center; background: var(--surface); border: 1.5px solid var(--border); border-radius: 50px; padding: 0.45rem 0.45rem 0.45rem 1.2rem; gap: 0.75rem; box-shadow: var(--shadow); transition: border-color 0.2s, box-shadow 0.2s; }
+    .search-box:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-light), var(--shadow); }
+    .search-icon { width: 17px; height: 17px; stroke: var(--ink-muted); flex-shrink: 0; transition: stroke 0.2s; }
+    .search-box:focus-within .search-icon { stroke: var(--accent); }
+    #search-input { flex: 1; border: none; outline: none; background: transparent; font-family: 'DM Sans', sans-serif; font-size: 0.93rem; color: var(--ink); }
+    #search-input::placeholder { color: var(--ink-muted); }
+    .btn-search { background: var(--accent); color: white; border: none; border-radius: 40px; padding: 0.58rem 1.2rem; font-family: 'DM Sans', sans-serif; font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: all 0.2s; white-space: nowrap; display: flex; align-items: center; gap: 0.4rem; }
+    .btn-search:hover { background: var(--accent-hover); transform: translateY(-1px); }
+    .btn-search:active { transform: translateY(0); }
+    .btn-search:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .btn-search svg { width: 13px; height: 13px; stroke: white; }
+
+    .suggestions { display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center; }
+    #landing.search-active .suggestions { display: none; }
+    .chip { background: var(--surface); border: 1px solid var(--border); border-radius: 50px; padding: 0.32rem 0.85rem; font-size: 0.78rem; color: var(--ink-soft); cursor: pointer; transition: all 0.2s; }
+    .chip:hover { background: var(--accent-light); border-color: var(--accent); color: var(--accent); }
+
+    /* RESULTS */
+    #results-page { display: none; }
+    #results-page.visible { display: block; }
+    .tabs-bar { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 2rem; display: flex; gap: 0; overflow-x: auto; scrollbar-width: none; }
+    .tabs-bar::-webkit-scrollbar { display: none; }
+    .tab-btn { display: flex; align-items: center; gap: 0.4rem; padding: 0.8rem 1rem; font-family: 'DM Sans', sans-serif; font-size: 0.84rem; font-weight: 500; color: var(--ink-soft); border: none; background: transparent; cursor: pointer; border-bottom: 2.5px solid transparent; white-space: nowrap; transition: all 0.2s; position: relative; top: 1px; }
+    .tab-btn:hover { color: var(--ink); }
+    .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+    .tab-count { background: var(--accent-light); color: var(--accent); font-size: 0.68rem; padding: 0.1rem 0.42rem; border-radius: 50px; font-weight: 600; min-width: 20px; text-align: center; }
+    .tab-btn.active .tab-count { background: var(--accent); color: white; }
+
+    .results-container { max-width: 760px; margin: 0 auto; padding: 1.75rem 2rem 4rem; }
+    .results-meta { font-size: 0.78rem; color: var(--ink-muted); margin-bottom: 1.4rem; display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap; }
+    .query-label { font-weight: 500; color: var(--ink-soft); }
+
+    /* source progress */
+    .source-progress { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1.25rem; }
+    .src-indicator { display: flex; align-items: center; gap: 0.35rem; font-size: 0.72rem; color: var(--ink-muted); background: var(--surface); border: 1px solid var(--border); border-radius: 50px; padding: 0.22rem 0.65rem; transition: all 0.3s; }
+    .src-indicator.loading .src-dot { background: var(--amber); animation: pulse 1s infinite; }
+    .src-indicator.done    .src-dot { background: #22c55e; }
+    .src-indicator.error   .src-dot { background: #ef4444; opacity: 0.6; }
+    .src-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border); flex-shrink: 0; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.35} }
+
+    /* CARDS */
+    .result-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.2rem 1.4rem; margin-bottom: 0.9rem; cursor: pointer; transition: all 0.2s ease; box-shadow: var(--shadow); animation: cardIn 0.35s ease both; text-decoration: none; display: block; color: inherit; }
+    .result-card:hover { box-shadow: var(--shadow-hover); transform: translateY(-2px); border-color: #D4CFC7; }
+    @keyframes cardIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+
+    .skeleton-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.2rem 1.4rem; margin-bottom: 0.9rem; }
+    .skel { background: linear-gradient(90deg, var(--border) 25%, #f0ece4 50%, var(--border) 75%); background-size: 200% 100%; border-radius: 6px; animation: shimmer 1.4s infinite; }
+    @keyframes shimmer { to { background-position: -200% 0; } }
+
+    .card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; margin-bottom: 0.55rem; }
+    .card-source { display: flex; align-items: center; gap: 0.45rem; font-size: 0.73rem; color: var(--ink-muted); }
+    .source-favicon { width: 15px; height: 15px; border-radius: 3px; flex-shrink: 0; overflow: hidden; }
+    .source-favicon img { width: 100%; height: 100%; object-fit: contain; }
+    .badges { display: flex; gap: 0.35rem; align-items: center; flex-shrink: 0; }
+    .type-badge { font-size: 0.68rem; font-weight: 600; padding: 0.18rem 0.55rem; border-radius: 50px; text-transform: capitalize; }
+    .badge-research { background: var(--accent-light); color: var(--accent); }
+    .badge-article  { background: var(--green-light);  color: var(--green); }
+    .badge-book     { background: var(--amber-light);  color: var(--amber); }
+    .badge-video    { background: var(--rose-light);   color: var(--rose); }
+    .badge-course   { background: var(--purple-light); color: var(--purple); }
+    .badge-forum    { background: var(--teal-light);   color: var(--teal); }
+    .badge-news     { background: #FEF9C3;             color: #713F12; }
+    .badge-tool     { background: var(--orange-light); color: var(--orange); }
+    .badge-wiki     { background: var(--green-light);  color: var(--green); }
+    .free-badge { font-size: 0.67rem; font-weight: 600; color: var(--green); background: var(--green-light); border-radius: 50px; padding: 0.15rem 0.5rem; }
+    .free-badge::before { content: '✓ '; }
+    .card-title { font-family: 'Lora', serif; font-size: 1.02rem; font-weight: 500; color: var(--ink); line-height: 1.4; margin-bottom: 0.4rem; transition: color 0.2s; }
+    .result-card:hover .card-title { color: var(--accent); }
+    .card-desc { font-size: 0.83rem; color: var(--ink-soft); line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .card-bottom { margin-top: 0.7rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+    .card-url { font-size: 0.72rem; color: var(--accent); opacity: 0.65; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .card-tags { display: flex; gap: 0.35rem; flex-wrap: wrap; }
+    .meta-tag { font-size: 0.68rem; color: var(--ink-muted); background: var(--bg); border: 1px solid var(--border); border-radius: 4px; padding: 0.12rem 0.42rem; }
+
+    /* VIDEO CARD */
+    .video-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 0.9rem; cursor: pointer; transition: all 0.2s ease; box-shadow: var(--shadow); animation: cardIn 0.35s ease both; text-decoration: none; display: flex; gap: 0; color: inherit; }
+    .video-card:hover { box-shadow: var(--shadow-hover); transform: translateY(-2px); border-color: #D4CFC7; }
+    .video-thumb { flex-shrink: 0; width: 180px; min-height: 102px; background: var(--border); position: relative; overflow: hidden; }
+    .video-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .video-thumb-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #1a1a2e, #16213e); }
+    .play-icon { width: 38px; height: 38px; background: rgba(255,255,255,0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+    .play-icon svg { width: 16px; height: 16px; fill: white; margin-left: 2px; }
+    .video-duration { position: absolute; bottom: 5px; right: 6px; background: rgba(0,0,0,0.75); color: #fff; font-size: 0.68rem; font-weight: 600; padding: 0.1rem 0.35rem; border-radius: 3px; }
+    .video-body { flex: 1; padding: 1rem 1.25rem; display: flex; flex-direction: column; gap: 0.35rem; min-width: 0; }
+    .video-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 0.5rem; }
+    .video-title { font-family: 'Lora', serif; font-size: 0.97rem; font-weight: 500; color: var(--ink); line-height: 1.4; transition: color 0.2s; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .video-card:hover .video-title { color: var(--accent); }
+    .video-channel { font-size: 0.75rem; color: var(--accent); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .video-meta { font-size: 0.72rem; color: var(--ink-muted); display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: auto; }
+    .video-desc { font-size: 0.81rem; color: var(--ink-soft); line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    @media (max-width: 520px) { .video-thumb { width: 120px; min-height: 68px; } .video-body { padding: 0.75rem 1rem; } }
+
+    /* explore cards */
+    .explore-card { border: 1.5px dashed var(--border); border-radius: var(--radius); padding: 1rem 1.4rem; margin-bottom: 0.9rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; text-decoration: none; color: inherit; transition: all 0.2s; animation: cardIn 0.35s ease both; }
+    .explore-card:hover { border-color: var(--accent); background: var(--accent-light); transform: translateY(-1px); }
+    .explore-info { flex: 1; }
+    .explore-title { font-size: 0.9rem; font-weight: 500; color: var(--ink); margin-bottom: 0.2rem; }
+    .explore-desc { font-size: 0.78rem; color: var(--ink-soft); }
+    .explore-arrow { color: var(--accent); font-size: 1.1rem; flex-shrink: 0; }
+    .section-label { font-size: 0.75rem; font-weight: 600; color: var(--ink-muted); letter-spacing: 0.06em; text-transform: uppercase; margin: 1.5rem 0 0.75rem; }
+
+    .empty-state { text-align: center; padding: 3.5rem 2rem; }
+    .empty-state .icon { font-size: 2rem; margin-bottom: 0.75rem; }
+    .empty-state h3 { font-family: 'Lora', serif; font-size: 1.1rem; margin-bottom: 0.4rem; }
+    .empty-state p { font-size: 0.85rem; color: var(--ink-soft); }
+
+    .footer-note { text-align: center; padding: 1.2rem; font-size: 0.73rem; color: var(--ink-muted); border-top: 1px solid var(--border); background: var(--surface); }
+    .footer-sources { margin-top: 0.3rem; font-size: 0.7rem; }
+
+    @media (max-width: 600px) {
+      #landing.search-active { flex-direction: column; align-items: flex-start; padding: 1rem; gap: 0.75rem; }
+      .results-container { padding: 1.25rem 1rem 3rem; }
+      .tabs-bar { padding: 0 1rem; }
+      .btn-search span { display: none; }
+      .btn-search { padding: 0.58rem 0.75rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="landing">
+  <div class="logo-block">
+    <a class="logo-mark" onclick="resetHome()">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+      </div>
+      <div>
+        <div class="logo-name">Mindvart</div>
+        <div class="logo-tagline">Free learning, everywhere</div>
+      </div>
+    </a>
+  </div>
+
+  <div class="hero-text">
+    <h1>Find <em>free</em> study<br/>materials, instantly.</h1>
+    <p>Searches real open databases — papers, books, articles, wikis — no AI, no keys, no payment. Ever.</p>
+    <div class="hero-sources">
+      <span class="src-pill">Wikipedia</span><span class="src-pill">arXiv</span>
+      <span class="src-pill">Open Library</span><span class="src-pill">Semantic Scholar</span>
+      <span class="src-pill">Internet Archive</span><span class="src-pill">CrossRef</span>
+      <span class="src-pill">Wikiversity</span><span class="src-pill">Wikibooks</span>
+      <span class="src-pill">PubMed</span><span class="src-pill">YouTube</span>
+    </div>
+  </div>
+
+  <div class="search-wrapper">
+    <div class="search-box">
+      <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+      </svg>
+      <input id="search-input" type="text" placeholder="Try 'quantum mechanics', 'Python basics', 'Renaissance'…" autocomplete="off" spellcheck="false"/>
+      <button class="btn-search" id="btn-search" onclick="doSearch()">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        <span>Search</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="suggestions">
+    <span class="chip" onclick="quickSearch('Machine Learning')">Machine Learning</span>
+    <span class="chip" onclick="quickSearch('World War II')">World War II</span>
+    <span class="chip" onclick="quickSearch('Introduction to Psychology')">Psychology</span>
+    <span class="chip" onclick="quickSearch('Calculus')">Calculus</span>
+    <span class="chip" onclick="quickSearch('Climate Change')">Climate Change</span>
+    <span class="chip" onclick="quickSearch('Creative Writing')">Creative Writing</span>
+  </div>
+</div>
+
+<div id="results-page">
+  <div class="tabs-bar" id="tabs-bar"></div>
+  <div class="results-container">
+    <div id="source-progress" class="source-progress" style="display:none;"></div>
+    <div id="results-meta" class="results-meta" style="display:none;"></div>
+    <div id="results-list"></div>
+  </div>
+</div>
+
+<div class="footer-note" id="footer" style="display:none;">
+  Mindvart is 100% free — no API keys, no accounts, no payment, ever. Knowledge should be free.
+  <div class="footer-sources">Sources: Wikipedia · arXiv · Open Library · Semantic Scholar · Internet Archive · CrossRef · Wikiversity · Wikibooks · PubMed · YouTube</div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════
+   MINDVART — 100% Free open APIs, no payment
+   ═══════════════════════════════════════════ */
+let allResults = [], currentCategory = 'all', currentQuery = '', isSearching = false;
+
+const TABS = [
+  {id:'all',label:'All',icon:'◈'},{id:'research',label:'Research',icon:'🔬'},
+  {id:'article',label:'Articles',icon:'📄'},{id:'wiki',label:'Wiki',icon:'📖'},
+  {id:'book',label:'Books',icon:'📚'},{id:'video',label:'Videos',icon:'▶'},
+  {id:'course',label:'Courses',icon:'🎓'},{id:'news',label:'News',icon:'📰'},
+  {id:'tool',label:'Tools',icon:'🛠'},
+];
+
+const $=id=>document.getElementById(id);
+const landing=$('landing'), resultsPage=$('results-page'), resultsList=$('results-list');
+const tabsBar=$('tabs-bar'), resultsMeta=$('results-meta'), srcProgress=$('source-progress'), footer=$('footer');
+const searchInput=$('search-input'), btnSearch=$('btn-search');
+
+searchInput.addEventListener('keydown', e=>{ if(e.key==='Enter') doSearch(); });
+function quickSearch(q){ searchInput.value=q; doSearch(); }
+function resetHome(){ landing.classList.remove('search-active'); resultsPage.classList.remove('visible'); footer.style.display='none'; searchInput.value=''; allResults=[]; currentCategory='all'; }
+
+/* ── MAIN SEARCH ── */
+async function doSearch(){
+  if(isSearching) return;
+  const q=searchInput.value.trim();
+  if(!q) return;
+  currentQuery=q; currentCategory='all'; isSearching=true; btnSearch.disabled=true;
+  allResults=[];
+
+  landing.classList.add('search-active');
+  resultsPage.classList.add('visible');
+  footer.style.display='none';
+  resultsMeta.style.display='none';
+  tabsBar.innerHTML=''; resultsList.innerHTML='';
+
+  showSkeletons(4);
+  initProgress();
+
+  const sources=[
+    {key:'wikipedia',  label:'Wikipedia',       fn:()=>searchWikipedia(q)},
+    {key:'wikiversity',label:'Wikiversity',      fn:()=>searchWikiversity(q)},
+    {key:'wikibooks',  label:'Wikibooks',        fn:()=>searchWikibooks(q)},
+    {key:'arxiv',      label:'arXiv',            fn:()=>searchArxiv(q)},
+    {key:'openlibrary',label:'Open Library',     fn:()=>searchOpenLibrary(q)},
+    {key:'semantic',   label:'Semantic Scholar', fn:()=>searchSemanticScholar(q)},
+    {key:'crossref',   label:'CrossRef',         fn:()=>searchCrossRef(q)},
+    {key:'pubmed',     label:'PubMed',           fn:()=>searchPubMed(q)},
+    {key:'archive',    label:'Internet Archive', fn:()=>searchInternetArchive(q)},
+    {key:'youtube',    label:'YouTube',          fn:()=>searchYouTube(q)},
+  ];
+
+  let firstReal=true;
+
+  await Promise.allSettled(sources.map(async ({key,fn})=>{
+    try{
+      const items=await fn();
+      setSrc(key,'done');
+      if(items&&items.length){
+        if(firstReal){ firstReal=false; resultsList.innerHTML=''; }
+        allResults.push(...items);
+        appendCards(items);
+        buildTabs(); updateMeta();
+      }
+    }catch(e){ setSrc(key,'error'); console.warn(key,e.message); }
+  }));
+
+  isSearching=false; btnSearch.disabled=false; footer.style.display='block';
+
+  if(allResults.length===0){
+    resultsList.innerHTML=`<div class="empty-state"><div class="icon">🔍</div><h3>No results found</h3><p>Try a different search term or check your connection.</p></div>`;
+  } else {
+    appendExploreSection(q);
+    buildTabs(); updateMeta();
+  }
+}
+
+/* ════════════════════════
+   FREE API FUNCTIONS
+   ════════════════════════ */
+
+async function searchWikipedia(q){
+  const d=await fj(`https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${enc(q)}&origin=*&format=json&srlimit=6&srprop=snippet`);
+  return (d?.query?.search||[]).map(r=>({
+    title:stripHtml(r.title), url:`https://en.wikipedia.org/wiki/${encodeURIComponent(r.title.replace(/ /g,'_'))}`,
+    description:stripHtml(r.snippet)+'…', type:'wiki', source:'Wikipedia', tags:['encyclopedia','open access'],
+  }));
+}
+
+async function searchWikiversity(q){
+  const d=await fj(`https://en.wikiversity.org/w/api.php?action=query&list=search&srsearch=${enc(q)}&origin=*&format=json&srlimit=4&srprop=snippet`);
+  return (d?.query?.search||[]).map(r=>({
+    title:stripHtml(r.title), url:`https://en.wikiversity.org/wiki/${encodeURIComponent(r.title.replace(/ /g,'_'))}`,
+    description:stripHtml(r.snippet)+'…', type:'course', source:'Wikiversity', tags:['learning','wiki','open access'],
+  }));
+}
+
+async function searchWikibooks(q){
+  const d=await fj(`https://en.wikibooks.org/w/api.php?action=query&list=search&srsearch=${enc(q)}&origin=*&format=json&srlimit=4&srprop=snippet`);
+  return (d?.query?.search||[]).map(r=>({
+    title:stripHtml(r.title), url:`https://en.wikibooks.org/wiki/${encodeURIComponent(r.title.replace(/ /g,'_'))}`,
+    description:stripHtml(r.snippet)+'…', type:'book', source:'Wikibooks', tags:['textbook','wiki','free'],
+  }));
+}
+
+async function searchArxiv(q){
+  /* arXiv blocks browser CORS — route through allorigins.win (free public proxy) */
+  const arxivUrl=`https://export.arxiv.org/api/query?search_query=all:${enc(q)}&max_results=5&sortBy=relevance`;
+  const res=await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(arxivUrl)}`);
+  if(!res.ok) throw new Error('proxy error');
+  const xml=new DOMParser().parseFromString(await res.text(),'application/xml');
+  return [...xml.querySelectorAll('entry')].map(e=>{
+    const authors=[...e.querySelectorAll('author name')].slice(0,2).map(a=>a.textContent).join(', ');
+    return {
+      title:e.querySelector('title')?.textContent?.trim()||'Untitled',
+      url:e.querySelector('id')?.textContent?.trim()||'',
+      description:(e.querySelector('summary')?.textContent?.trim()||'').slice(0,200)+'…',
+      type:'research', source:'arXiv', tags:['preprint','open access',authors||''].filter(Boolean),
+    };
+  });
+}
+
+async function searchOpenLibrary(q){
+  const d=await fj(`https://openlibrary.org/search.json?q=${enc(q)}&limit=5&fields=title,author_name,subject,first_sentence,key`);
+  return (d?.docs||[]).filter(r=>r.title).map(r=>{
+    const desc=r.first_sentence?.value||r.first_sentence||(r.subject?`Topics: ${r.subject.slice(0,3).join(', ')}`:'Available on Open Library');
+    return { title:r.title, url:`https://openlibrary.org${r.key}`, description:String(desc).slice(0,200), type:'book', source:'Open Library', tags:['book','free',r.author_name?.[0]||''].filter(Boolean) };
+  });
+}
+
+async function searchSemanticScholar(q){
+  const d=await fj(`https://api.semanticscholar.org/graph/v1/paper/search?query=${enc(q)}&fields=title,abstract,url,year,authors,openAccessPdf&limit=5`);
+  return (d?.data||[]).filter(r=>r.openAccessPdf||r.url).map(r=>{
+    const link=r.openAccessPdf?.url||r.url||`https://www.semanticscholar.org/paper/${r.paperId}`;
+    const authors=(r.authors||[]).slice(0,2).map(a=>a.name).join(', ');
+    return { title:r.title||'Untitled', url:link, description:(r.abstract||'Academic paper on Semantic Scholar.').slice(0,200)+'…', type:'research', source:'Semantic Scholar', tags:['paper',r.year?String(r.year):'',authors].filter(Boolean) };
+  });
+}
+
+async function searchCrossRef(q){
+  const d=await fj(`https://api.crossref.org/works?query=${enc(q)}&rows=5&filter=has-full-text:true,type:journal-article&select=title,abstract,URL,author,published,container-title`);
+  return (d?.message?.items||[]).filter(r=>r.URL).map(r=>{
+    const title=Array.isArray(r.title)?r.title[0]:r.title||'Untitled';
+    const year=r.published?.['date-parts']?.[0]?.[0];
+    const journal=(Array.isArray(r['container-title'])?r['container-title'][0]:'')||'';
+    const author=(r.author||[]).slice(0,2).map(a=>a.family||a.name).filter(Boolean).join(', ');
+    return { title, url:r.URL, description:(r.abstract?stripHtml(r.abstract).slice(0,200)+'…':`Published in ${journal||'academic journal'}${year?` (${year})`:''}. Open access article.`), type:'research', source:journal?`CrossRef · ${journal.slice(0,28)}`:'CrossRef', tags:['journal',year?String(year):'',author].filter(Boolean) };
+  });
+}
+
+async function searchPubMed(q){
+  const s=await fj(`https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pmc&term=${enc(q)}+open+access[filter]&retmax=5&retmode=json`);
+  const ids=s?.esearchresult?.idlist||[];
+  if(!ids.length) return [];
+  const sum=await fj(`https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pmc&id=${ids.join(',')}&retmode=json`);
+  return (sum?.result?.uids||[]).map(id=>{
+    const r=sum.result[id];
+    return { title:r?.title||'PubMed Article', url:`https://www.ncbi.nlm.nih.gov/pmc/articles/PMC${id}/`, description:`Published in ${r?.fulljournalname||'biomedical journal'}${r?.pubdate?` (${r.pubdate.slice(0,4)})`:''}. Freely available via PubMed Central.`, type:'research', source:'PubMed Central', tags:['biomedical','open access','peer-reviewed'] };
+  });
+}
+
+async function searchInternetArchive(q){
+  const d=await fj(`https://archive.org/advancedsearch.php?q=${enc(q)}+AND+mediatype:(texts)&fl[]=identifier,title,description,creator&rows=5&output=json&page=1`);
+  return (d?.response?.docs||[]).filter(r=>r.title).map(r=>({
+    title:Array.isArray(r.title)?r.title[0]:r.title,
+    url:`https://archive.org/details/${r.identifier}`,
+    description:(Array.isArray(r.description)?r.description[0]:r.description||'Freely available on the Internet Archive.').slice(0,200),
+    type:'book', source:'Internet Archive',
+    tags:['archive','free',r.creator?(Array.isArray(r.creator)?r.creator[0]:r.creator):''].filter(Boolean),
+  }));
+}
+
+async function searchYouTube(q){
+  /* Uses Invidious — a free, open-source YouTube frontend with a public API.
+     No API key needed. Results link directly to youtube.com.
+     We try multiple public instances in case one is down. */
+  const instances=[
+    'https://iv.datura.network',
+    'https://invidious.privacyredirect.com',
+    'https://invidious.nerdvpn.de',
+  ];
+  let data=null;
+  for(const base of instances){
+    try{
+      const r=await fetch(`${base}/api/v1/search?q=${enc(q+" educational lecture tutorial")}&type=video&sort_by=relevance`,{signal:AbortSignal.timeout(6000)});
+      if(r.ok){ data=await r.json(); break; }
+    }catch(e){ continue; }
+  }
+  if(!data||!Array.isArray(data)) throw new Error('All Invidious instances failed');
+
+  return data.slice(0,8).filter(v=>v.type==='video'||v.videoId).map(v=>{
+    const videoId=v.videoId||'';
+    const thumb=v.videoThumbnails?.find(t=>t.quality==='medium')||v.videoThumbnails?.[0];
+    const dur=v.lengthSeconds?formatDuration(v.lengthSeconds):'';
+    const views=v.viewCount?formatViews(v.viewCount):'';
+    const published=v.published?new Date(v.published*1000).getFullYear():'';
+    return {
+      title:v.title||'YouTube Video',
+      url:`https://www.youtube.com/watch?v=${videoId}`,
+      description:v.description||v.descriptionHtml?.replace(/<[^>]*>/g,'')||'',
+      type:'video', source:'YouTube',
+      channel:v.author||'',
+      thumbUrl:thumb?.url||`https://i.ytimg.com/vi/${videoId}/mqdefault.jpg`,
+      videoId, duration:dur, views, published,
+      tags:['video','free','youtube'],
+    };
+  });
+}
+
+function formatDuration(sec){
+  if(!sec) return '';
+  const h=Math.floor(sec/3600), m=Math.floor((sec%3600)/60), s=sec%60;
+  if(h>0) return `${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  return `${m}:${String(s).padStart(2,'0')}`;
+}
+function formatViews(n){
+  if(n>=1e9) return (n/1e9).toFixed(1)+'B views';
+  if(n>=1e6) return (n/1e6).toFixed(1)+'M views';
+  if(n>=1e3) return (n/1e3).toFixed(0)+'K views';
+  return n+' views';
+}
+
+/* ── Explore section — no-API platforms ── */
+function appendExploreSection(q){
+  if(resultsList.querySelector('.explore-lbl')) return;
+  const explores=[
+    {url:`https://www.khanacademy.org/search?page_search_query=${enc(q)}`,label:`"${q}" on Khan Academy`,desc:'Free interactive lessons and practice exercises',type:'course',icon:'🎓'},
+    {url:`https://ocw.mit.edu/search/?q=${enc(q)}`,label:`"${q}" — MIT OpenCourseWare`,desc:'Free university course materials from MIT',type:'course',icon:'🎓'},
+    {url:`https://www.coursera.org/search?query=${enc(q)}&productTypeDescription=Courses`,label:`"${q}" on Coursera (free audit)`,desc:'Audit world-class courses from top universities for free',type:'course',icon:'🎓'},
+    {url:`https://phet.colorado.edu/en/simulations/filter?q=${enc(q)}`,label:`"${q}" — PhET Simulations`,desc:'Free interactive science and math simulations',type:'tool',icon:'🛠'},
+    {url:`https://scholar.google.com/scholar?q=${enc(q)}`,label:`"${q}" on Google Scholar`,desc:'Find freely accessible academic papers',type:'research',icon:'🔬'},
+    {url:`https://www.gutenberg.org/ebooks/search/?query=${enc(q)}`,label:`"${q}" — Project Gutenberg`,desc:'70,000+ free public domain books',type:'book',icon:'📚'},
+    {url:`https://openstax.org/subjects`,label:'OpenStax Free Textbooks',desc:'Peer-reviewed, openly licensed college textbooks',type:'book',icon:'📚'},
+  ];
+  const lbl=document.createElement('div');
+  lbl.className='section-label explore-lbl'; lbl.textContent='Also explore on these free platforms';
+  resultsList.appendChild(lbl);
+  explores.forEach((e,i)=>{
+    const a=document.createElement('a');
+    a.className='explore-card'; a.href=e.url; a.target='_blank'; a.rel='noopener noreferrer';
+    a.style.animationDelay=`${i*0.04}s`; a.dataset.type=e.type;
+    a.innerHTML=`<div class="explore-info"><div class="explore-title">${e.icon} ${escHtml(e.label)}</div><div class="explore-desc">${escHtml(e.desc)}</div></div><div class="explore-arrow">→</div>`;
+    resultsList.appendChild(a);
+  });
+}
+
+/* ════════════════
+   UI HELPERS
+   ════════════════ */
+function showSkeletons(n){
+  resultsList.innerHTML=Array(n).fill(`<div class="skeleton-card"><div class="skel" style="height:11px;width:28%;margin-bottom:12px;"></div><div class="skel" style="height:17px;width:68%;margin-bottom:10px;"></div><div class="skel" style="height:11px;margin-bottom:6px;"></div><div class="skel" style="height:11px;width:55%;"></div></div>`).join('');
+}
+
+function initProgress(){
+  srcProgress.style.display='flex'; srcProgress.innerHTML='';
+  [['wikipedia','Wikipedia'],['wikiversity','Wikiversity'],['wikibooks','Wikibooks'],
+   ['arxiv','arXiv'],['openlibrary','Open Library'],['semantic','Semantic Scholar'],
+   ['crossref','CrossRef'],['pubmed','PubMed'],['archive','Internet Archive'],['youtube','YouTube']
+  ].forEach(([key,label])=>{
+    const el=document.createElement('div');
+    el.className='src-indicator loading'; el.id=`src-${key}`;
+    el.innerHTML=`<div class="src-dot"></div>${label}`;
+    srcProgress.appendChild(el);
+  });
+}
+function setSrc(key,state){ const el=$(`src-${key}`); if(el) el.className=`src-indicator ${state}`; }
+
+function appendCards(items){
+  const exploreLabel=resultsList.querySelector('.explore-lbl');
+  items.forEach((item,i)=>{
+    const card=buildCard(item,allResults.length-items.length+i);
+    if(exploreLabel) resultsList.insertBefore(card,exploreLabel);
+    else resultsList.appendChild(card);
+  });
+  // keep explore cards at very bottom
+  const explores=[...resultsList.querySelectorAll('.explore-card')];
+  if(exploreLabel && explores.length){ resultsList.appendChild(exploreLabel); explores.forEach(e=>resultsList.appendChild(e)); }
+}
+
+function buildCard(item,i){
+  // Video cards get a special thumbnail layout
+  if(item.type==='video' && item.videoId){
+    return buildVideoCard(item,i);
+  }
+  const a=document.createElement('a');
+  a.className='result-card'; a.href=item.url||'#'; a.target='_blank'; a.rel='noopener noreferrer';
+  a.style.animationDelay=`${(i%8)*0.05}s`; a.dataset.type=item.type||'article';
+  const type=item.type||'article';
+  const domain=getDomain(item.url);
+  const favicon=domain?`https://www.google.com/s2/favicons?domain=${domain}&sz=32`:'';
+  const tagsHtml=(item.tags||[]).filter(Boolean).slice(0,3).map(t=>`<span class="meta-tag">${escHtml(t)}</span>`).join('');
+  a.innerHTML=`
+    <div class="card-top">
+      <div class="card-source">
+        <div class="source-favicon">${favicon?`<img src="${favicon}" alt="" onerror="this.parentElement.style.display='none'"/>`:''}</div>
+        <span>${escHtml(item.source||domain||'Web')}</span>
+      </div>
+      <div class="badges">
+        <span class="type-badge badge-${escHtml(type)}">${escHtml(type)}</span>
+        <span class="free-badge">Free</span>
+      </div>
+    </div>
+    <div class="card-title">${escHtml(item.title||'Resource')}</div>
+    <div class="card-desc">${escHtml(item.description||'')}</div>
+    <div class="card-bottom">
+      <span class="card-url">${escHtml(item.url||'')}</span>
+      <div class="card-tags">${tagsHtml}</div>
+    </div>`;
+  return a;
+}
+
+function buildVideoCard(item,i){
+  const a=document.createElement('a');
+  a.className='video-card'; a.href=item.url||'#'; a.target='_blank'; a.rel='noopener noreferrer';
+  a.style.animationDelay=`${(i%8)*0.05}s`; a.dataset.type='video';
+
+  const thumbHtml=item.thumbUrl
+    ? `<img src="${escHtml(item.thumbUrl)}" alt="" loading="lazy" onerror="this.parentElement.innerHTML='<div class=\\'video-thumb-placeholder\\'><div class=\\'play-icon\\'><svg viewBox=\\'0 0 24 24\\'><polygon points=\\'5,3 19,12 5,21\\'/></svg></div></div>'">`
+    : `<div class="video-thumb-placeholder"><div class="play-icon"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div></div>`;
+
+  const metaParts=[item.channel&&`<span>${escHtml(item.channel)}</span>`,item.views&&`<span>${escHtml(item.views)}</span>`,item.published&&`<span>${escHtml(String(item.published))}</span>`].filter(Boolean).join('');
+
+  a.innerHTML=`
+    <div class="video-thumb">
+      ${thumbHtml}
+      ${item.duration?`<span class="video-duration">${escHtml(item.duration)}</span>`:''}
+    </div>
+    <div class="video-body">
+      <div class="video-top">
+        <div class="video-title">${escHtml(item.title||'Video')}</div>
+        <span class="free-badge" style="flex-shrink:0;">Free</span>
+      </div>
+      <div class="video-channel">${escHtml(item.channel||'YouTube')}</div>
+      ${item.description?`<div class="video-desc">${escHtml(item.description.slice(0,160))}</div>`:''}
+      ${metaParts?`<div class="video-meta">${metaParts}</div>`:''}
+    </div>`;
+  return a;
+}
+
+function buildTabs(){
+  const counts={all:allResults.length};
+  allResults.forEach(r=>{ counts[r.type]=(counts[r.type]||0)+1; });
+  const active=currentCategory;
+  tabsBar.innerHTML='';
+  TABS.forEach(tab=>{
+    const c=counts[tab.id]||0;
+    if(tab.id!=='all'&&c===0) return;
+    const btn=document.createElement('button');
+    btn.className='tab-btn'+(tab.id===active?' active':''); btn.dataset.cat=tab.id;
+    btn.innerHTML=`${tab.icon} ${tab.label} <span class="tab-count">${c}</span>`;
+    btn.addEventListener('click',()=>{ document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); currentCategory=tab.id; filterView(tab.id); });
+    tabsBar.appendChild(btn);
+  });
+}
+
+function filterView(cat){
+  [...resultsList.querySelectorAll('.result-card,.explore-card')].forEach(c=>{ c.style.display=(cat==='all'||c.dataset.type===cat)?'block':'none'; });
+  const lbl=resultsList.querySelector('.explore-lbl');
+  if(lbl) lbl.style.display=(cat==='all'||['video','course','tool','research','book'].includes(cat))?'block':'none';
+  updateMeta();
+}
+
+function updateMeta(){
+  const total=currentCategory==='all'?allResults.length:allResults.filter(r=>r.type===currentCategory).length;
+  resultsMeta.style.display='flex';
+  resultsMeta.innerHTML=`<span>${total} free resource${total!==1?'s':''} for</span> <span class="query-label">"${escHtml(currentQuery)}"</span> <span>— 0 paywalls</span>`;
+}
+
+/* utils */
+async function fj(url){ const r=await fetch(url); if(!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }
+function getDomain(url){ try{ return new URL(url).hostname.replace('www.',''); } catch{ return null; } }
+function enc(s){ return encodeURIComponent(s); }
+function stripHtml(s){ return String(s||'').replace(/<[^>]*>/g,'').replace(/&quot;/g,'"').replace(/&amp;/g,'&').replace(/&#\d+;/g,'').trim(); }
+function escHtml(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+</script>
+</body>
+</html>
